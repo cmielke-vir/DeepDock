@@ -1,26 +1,34 @@
 # The base image we are going to use.
-FROM nvcr.io/nvidia/pytorch:19.10-py3
+#FROM nvcr.io/nvidia/pytorch:19.10-py3
+FROM nvcr.io/nvidia/pytorch:21.05-py3
+
+RUN conda install python=3.7
+#RUN python -V
+#RUN c
 
 #Do some basic preparations
-RUN conda install -c anaconda joblib -y && \
-    conda install -c conda-forge tensorflow -y
+#RUN CONDA_RESTORE_FREE_CHANNEL=1 conda install -c anaconda joblib -y && \
+#    conda install -c conda-forge tensorflow -y
+RUN conda install -c conda-forge tensorflow -y
 
 RUN pip install ipython jupyter jupyter-tensorboard --upgrade && \
     jupyter tensorboard enable --system
 
 #RUN pip install packages
-RUN conda install -c conda-forge rdkit=2019.09.1 -y && \
-    pip install \
-        cupy-cuda101 \
-        torch==1.4.0 \
-        torch-scatter==2.0.4 -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
-        torch-sparse==0.6.1 -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
-        torch-cluster==1.5.3 -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
-        torch-spline-conv==1.2.0 -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
-        torch_geometric==1.4.3 \
-        numpy==1.16.6 \
+RUN conda install -c conda-forge rdkit=2019.09.1 -y
+RUN pip install https://download.pytorch.org/whl/cu113/torch-1.10.0%2Bcu113-cp37-cp37m-linux_x86_64.whl
+RUN    pip install \
+	joblib \
+        cupy-cuda113 \
+        torch-scatter==2.0.9 -f https://pytorch-geometric.com/whl/torch-1.10.0+cu113.html \
+        torch-sparse==0.6.12 -f https://pytorch-geometric.com/whl/torch-1.10.0+cu113.html \
+        torch-cluster==1.5.9 -f https://pytorch-geometric.com/whl/torch-1.10.0+cu113.html \
+        torch-spline-conv==1.2.1 -f https://pytorch-geometric.com/whl/torch-1.10.0+cu113.html \
+        torch_geometric -f https://pytorch-geometric.com/whl/torch-1.10.0+cu113.html
+
+RUN pip install        numpy \
         plyfile==0.7.2 \
-        pandas==0.25.1 \
+        pandas \
         networkx==2.5 \
         scikit_learn==0.21.3 \
         matplotlib==3.0.2 \
@@ -30,9 +38,22 @@ RUN conda install -c conda-forge rdkit=2019.09.1 -y && \
         py3Dmol
 
 WORKDIR /
-RUN wget --no-check-certificate https://github.com/PyMesh/PyMesh/releases/download/v0.2.0/pymesh2-0.2.0-cp36-cp36m-linux_x86_64.whl && \
-    pip install pymesh2-0.2.0-cp36-cp36m-linux_x86_64.whl && \
-    git clone https://github.com/shenwanxiang/ChemBench.git && \
+#RUN python -V -V
+#RUN c
+#RUN pip install -U pip
+#RUN wget --no-check-certificate https://github.com/PyMesh/PyMesh/releases/download/v0.2.0/pymesh2-0.2.0-cp36-cp36m-linux_x86_64.whl && \
+RUN wget --no-check-certificate https://github.com/PyMesh/PyMesh/releases/download/v0.3/pymesh2-0.3-cp37-cp37m-linux_x86_64.whl && \
+    pip install pymesh2-0.3-cp37-cp37m-linux_x86_64.whl
+
+#RUN git clone https://github.com/PyMesh/PyMesh.git && \
+#	cd PyMesh && \
+#	git submodule update --init && \
+#	cd third_party && \
+#	python3 build.py all
+
+
+
+RUN git clone https://github.com/shenwanxiang/ChemBench.git && \
     cd ChemBench && \
     pip install -e .
 
@@ -40,7 +61,7 @@ RUN wget --no-check-certificate https://github.com/PyMesh/PyMesh/releases/downlo
 # Install APBS, PDB2PQR and MSMSto calculate target mesh with MaSIF
 # install necessary dependencies
 RUN apt-get update && \
-    apt-get install -y wget git unzip cmake vim libgl1-mesa-glx
+    DEBIAN_FRONTEND=noninteractive apt-get install -y wget git unzip cmake vim libgl1-mesa-glx
 
 # DOWNLOAD/INSTALL APBS
 RUN mkdir /install
