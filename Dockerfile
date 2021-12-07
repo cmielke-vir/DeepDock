@@ -80,10 +80,17 @@ ENV PDB2PQR_BIN /usr/local/bin/pdb2pqr/pdb2pqr.py
 
 # DOWNLOAD reduce (for protonation)
 WORKDIR /install
-RUN ["wget", "-O", "reduce.gz", "http://kinemage.biochem.duke.edu/php/downlode-3.php?filename=/../downloads/software/reduce31/reduce.3.23.130521.linuxi386.gz"]
-RUN gunzip reduce.gz && \
-    chmod 755 reduce && \
-    cp reduce /usr/local/bin/
+#RUN ["wget", "-O", "reduce.gz", "http://kinemage.biochem.duke.edu/php/downlode-3.php?filename=/../downloads/software/reduce31/reduce.3.23.130521.linuxi386.gz"]
+#RUN gunzip reduce.gz && \
+#    chmod 755 reduce && \
+#    cp reduce /usr/local/bin/
+
+# compiling reduce from source since the lab no longer seems to host it
+RUN git clone https://github.com/rlabduke/reduce
+RUN ls
+RUN cd reduce && \
+        make && \
+        make install
 
 # Clone deepdock and install 
 WORKDIR /
