@@ -1,3 +1,6 @@
+# key table of pytorch version compatibilities
+# https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes/rel_21-07.html#rel_21-07
+
 # The base image we are going to use.
 #FROM nvcr.io/nvidia/pytorch:19.10-py3
 FROM nvcr.io/nvidia/pytorch:21.05-py3
